@@ -1,1 +1,51 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    missing_required_param: error
+    missing_return: error
+    todo: ignore
+
+linter:
+  rules:
+    # Sicurezza e gestione dell'asincronia 
+    - unawaited_futures
+    - cancel_subscriptions
+    - close_sinks
+    - use_build_context_synchronously
+
+    # Qualità e pulizia del codice
+    - always_declare_return_types
+    - avoid_empty_else
+    - avoid_print # Impedisce di lasciare print() in produzione
+    - avoid_relative_lib_imports
+    - avoid_shadowing_type_parameters
+    - avoid_types_as_parameter_names
+    - empty_catches # Segnala blocchi try/catch vuoti
+    - no_duplicate_case_values
+    - prefer_conditional_assignment
+    - prefer_is_empty
+    - prefer_is_not_empty
+    - prefer_iterable_whereType
+    - unnecessary_nullable_for_final_variable_declarations
+    - unnecessary_string_interpolations
+
+    # Performance e ottimizzazione di Flutter
+    - prefer_const_constructors # Forza const sui widget per evitare rebuild inutili
+    - prefer_const_constructors_in_immutables
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - avoid_unnecessary_containers # Rimuove Container sprecati
+    - use_key_in_widget_constructors
+
+    # Stile e formato
+    - camel_case_types
+    - file_names
+    - library_names
+    - library_prefixes
+    - prefer_final_fields 
+    - prefer_final_locals
