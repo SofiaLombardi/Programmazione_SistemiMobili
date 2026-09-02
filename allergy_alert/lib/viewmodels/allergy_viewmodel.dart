@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class AllergyViewModel extends ChangeNotifier {
-  final ApiService _apiservice = ApiService();
-  final StorageService _storageService = StorageService();
+  final ApiService _apiservice;
+  final StorageService _storageService;
 
   PollenData? todayPollen;
   List<PollenData> forecastPollen = [];
@@ -26,7 +26,13 @@ class AllergyViewModel extends ChangeNotifier {
   final double _defaultLat = 41.8919;
   final double _defaultLon = 12.5113;
 
-  AllergyViewModel() {
+  //UNICO COSTRUTTORE CON DEPENDENCY INJECTION
+  // Se non si passano argomenti, assegna ApiService() e StorageService() di default
+  AllergyViewModel({
+    ApiService? apiService,
+    StorageService? storageService,
+  })  : _apiservice = apiService ?? ApiService(),
+        _storageService = storageService ?? StorageService() {
     Future.microtask(() => loadAppData());
   }
 
@@ -90,8 +96,8 @@ class AllergyViewModel extends ChangeNotifier {
     if (forecastPollen.isEmpty) return;
 
     bool riskDetected = false;
-    List<String> criticalPollens = [];
 
+    final List<String> criticalPollens = [];
     for (var dayData in forecastPollen) {
       if (dayData.birchPollen > 50 && !criticalPollens.contains("Betulla")) {
         criticalPollens.add("Betulla");
