@@ -12,8 +12,8 @@ class PollenData {
   });
 
   factory PollenData.fromJson(Map<String, dynamic> json) {
-    final hourly = json['hourly'];
-    if (hourly == null) {
+    final dynamic hourlyRaw = json['hourly'];
+    if (hourlyRaw is! Map<String, dynamic>) {
       return PollenData(
         birchPollen: 0.0,
         grassPollen: 0.0,
@@ -22,15 +22,22 @@ class PollenData {
       );
     }
 
-    List<dynamic> birchList = hourly['birch_pollen'] ?? [];
-    List<dynamic> grassList = hourly['grass_pollen'] ?? [];
-    List<dynamic> oliveList = hourly['olive_pollen'] ?? [];
-    List<dynamic> timeList = hourly['time'] ?? [];
+    final Map<String, dynamic> hourly = hourlyRaw;
+
+    final List<dynamic> birchList =
+        (hourly['birch_pollen'] as List<dynamic>?) ?? [];
+    final List<dynamic> grassList =
+        (hourly['grass_pollen'] as List<dynamic>?) ?? [];
+    final List<dynamic> oliveList =
+        (hourly['olive_pollen'] as List<dynamic>?) ?? [];
+    final List<dynamic> timeList =
+        (hourly['time'] as List<dynamic>?) ?? [];
 
     int currentIndex = 0;
-    final now = DateTime.now();
+    final DateTime now = DateTime.now();
+
     for (int i = 0; i < timeList.length; i++) {
-      final t = DateTime.tryParse(timeList[i].toString());
+      final DateTime? t = DateTime.tryParse(timeList[i].toString());
       if (t != null &&
           t.year == now.year &&
           t.month == now.month &&
@@ -42,13 +49,13 @@ class PollenData {
     }
 
     return PollenData(
-      birchPollen: currentIndex < birchList.length
+      birchPollen: currentIndex < birchList.length && birchList[currentIndex] != null
           ? (birchList[currentIndex] as num).toDouble()
           : 0.0,
-      grassPollen: currentIndex < grassList.length
+      grassPollen: currentIndex < grassList.length && grassList[currentIndex] != null
           ? (grassList[currentIndex] as num).toDouble()
           : 0.0,
-      olivePollen: currentIndex < oliveList.length
+      olivePollen: currentIndex < oliveList.length && oliveList[currentIndex] != null
           ? (oliveList[currentIndex] as num).toDouble()
           : 0.0,
       time: currentIndex < timeList.length
@@ -63,14 +70,14 @@ PollenData parsePollenTodayFromJson(Map<String, dynamic> json) {
 }
 
 List<PollenData> parsePollenForecastFromJson(Map<String, dynamic> json) {
-  final hourly = json['hourly'];
+  final dynamic hourlyRaw = json['hourly'];
   final List<PollenData> forecastList = [];
 
-  if (hourly != null && hourly['time'] != null) {
-    List<dynamic> times = hourly['time'];
-    List<dynamic> birch = hourly['birch_pollen'] ?? [];
-    List<dynamic> grass = hourly['grass_pollen'] ?? [];
-    List<dynamic> olive = hourly['olive_pollen'] ?? [];
+  if (hourlyRaw is Map<String, dynamic> && hourlyRaw['time'] != null) {
+    final List<dynamic> times = (hourlyRaw['time'] as List<dynamic>?) ?? [];
+    final List<dynamic> birch = (hourlyRaw['birch_pollen'] as List<dynamic>?) ?? [];
+    final List<dynamic> grass = (hourlyRaw['grass_pollen'] as List<dynamic>?) ?? [];
+    final List<dynamic> olive = (hourlyRaw['olive_pollen'] as List<dynamic>?) ?? [];
 
     for (int i = 24 + 12; i < times.length; i += 24) {
       forecastList.add(
@@ -89,5 +96,6 @@ List<PollenData> parsePollenForecastFromJson(Map<String, dynamic> json) {
       );
     }
   }
+
   return forecastList;
 }
