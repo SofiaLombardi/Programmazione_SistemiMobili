@@ -110,6 +110,8 @@ class _LogSymptomScreenState extends State<LogSymptomScreen> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () async {
+                  final navigator = Navigator.of(context);
+                  
                   await widget.viewModel.addSymptomLog(
                     _severity.toInt(),
                     _noteController.text.trim(),
@@ -117,7 +119,7 @@ class _LogSymptomScreenState extends State<LogSymptomScreen> {
 
                   if (!mounted) return;
 
-                  Navigator.of(context).pop();
+                  navigator.pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
